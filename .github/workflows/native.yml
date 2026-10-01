@@ -41,6 +41,8 @@ jobs:
         env:
           # 10.0.2.2 is the host machine as seen from the Android emulator.
           EXPO_PUBLIC_SUPABASE_URL: http://10.0.2.2:54321
+          # Enables cleartext HTTP for this E2E build only (plugins/with-e2e-cleartext.js).
+          E2E_LOCAL_BACKEND: '1'
         run: |
           npx expo prebuild --platform android --no-install
           cd android && ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
@@ -84,6 +86,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Prebuild + build for simulator
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+          EXPO_PUBLIC_SUPABASE_KEY: ci-compile-check
         run: |
           npx expo prebuild --platform ios
           xcodebuild -workspace ios/Clapp.xcworkspace -scheme Clapp -configuration Release \

@@ -18,6 +18,22 @@ void SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [queryClient] = useState(createQueryClient);
   const scheme = useApplySettings();
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={navigationThemes[scheme]}>
+            <RootNavigator />
+            <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
+
+function RootNavigator() {
   useAuthListener();
   const authStatus = useAuthStore((s) => s.status);
   const isSignedIn = authStatus === 'signedIn';
@@ -26,26 +42,18 @@ export default function RootLayout() {
     if (authStatus !== 'loading') SplashScreen.hide();
   }, [authStatus]);
 
+  // Until the stored session is restored, render nothing: the splash stays visible on native, and
+  // statically rendered web pages are empty shells that hydrate on the client (see docs/architecture.md).
+  if (authStatus === 'loading') return null;
+
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={navigationThemes[scheme]}>
-            {/* Until the stored session is restored, render nothing (splash stays visible on native). */}
-            {authStatus === 'loading' ? null : (
-              <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Protected guard={isSignedIn}>
-                  <Stack.Screen name="(tabs)" />
-                </Stack.Protected>
-                <Stack.Protected guard={!isSignedIn}>
-                  <Stack.Screen name="(auth)" />
-                </Stack.Protected>
-              </Stack>
-            )}
-            <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-          </ThemeProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isSignedIn}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+      <Stack.Protected guard={!isSignedIn}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
   );
 }

@@ -23,6 +23,9 @@ src/app/_layout.tsx
 
 - `web.output = "static"`: every route is pre-rendered at build time (`pnpm build:web` → `dist/`). Browser-only APIs must not run during render.
 - Hosting must serve `+not-found.html` for unknown paths (EAS Hosting does this automatically).
+- The root navigator renders nothing until the stored session is restored, so statically rendered pages are empty shells that hydrate on the client. Fine for an auth-gated app; public marketing pages (SEO) would need routes outside the auth gate.
+- After sign-in users land on `/` (no return to the originally requested deep link yet).
+- Builds: `pnpm build:web` is the verification build (local/mocked Supabase URL); `pnpm build:web:prod` requires real `EXPO_PUBLIC_SUPABASE_*` values and fails without them.
 
 ## Testing pyramid
 

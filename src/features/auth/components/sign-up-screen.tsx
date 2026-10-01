@@ -30,6 +30,7 @@ export function SignUpScreen() {
       <Card className="gap-4">
         <Text variant="title">{t('auth.signUp.title')}</Text>
         <CredentialsForm
+          mode="signUp"
           schema={signUpSchema}
           submitLabel={t('auth.signUp.submit')}
           passwordHint={t('auth.signUp.passwordHint')}

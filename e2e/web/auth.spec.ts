@@ -69,4 +69,15 @@ test.describe('authentication', () => {
 
     await expect(page.getByRole('heading', { name: 'Welcome to Clapp' })).toBeVisible();
   });
+
+  test('sign up with an existing email shows an error', async ({ page }) => {
+    await mockSupabaseAuth(page, { accounts: [TEST_ACCOUNT] });
+    await page.goto('/sign-up');
+
+    await page.getByLabel('Email').fill(TEST_ACCOUNT.email);
+    await page.getByLabel('Password').fill('long enough');
+    await page.getByRole('button', { name: 'Sign up' }).click();
+
+    await expect(page.getByText('An account with this email already exists')).toBeVisible();
+  });
 });

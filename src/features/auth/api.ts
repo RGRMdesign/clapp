@@ -11,6 +11,7 @@ export type AuthErrorKey =
   | 'auth.errors.emailTaken'
   | 'auth.errors.weakPassword'
   | 'auth.errors.emailNotConfirmed'
+  | 'auth.errors.rateLimited'
   | 'auth.errors.network'
   | 'auth.errors.unknown';
 
@@ -26,6 +27,9 @@ export function authErrorKey(error: unknown): AuthErrorKey {
         return 'auth.errors.weakPassword';
       case 'email_not_confirmed':
         return 'auth.errors.emailNotConfirmed';
+      case 'over_request_rate_limit':
+      case 'over_email_send_rate_limit':
+        return 'auth.errors.rateLimited';
     }
     if (error.status === 0 || error.name === 'AuthRetryableFetchError')
       return 'auth.errors.network';

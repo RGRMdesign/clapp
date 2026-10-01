@@ -6,12 +6,14 @@ import { type z } from 'zod';
 
 import { Button, Text, TextField } from '@/components/ui';
 
-import { type signInSchema, type signUpSchema } from '../schema';
+import { isValidationKey, type signInSchema, type signUpSchema } from '../schema';
 
 type CredentialsSchema = typeof signInSchema | typeof signUpSchema;
 type Credentials = z.infer<CredentialsSchema>;
 
 type CredentialsFormProps = {
+  /** Sign-up asks password managers to generate/save a new password. */
+  mode: 'signIn' | 'signUp';
   schema: CredentialsSchema;
   submitLabel: string;
   passwordHint?: string;
@@ -22,6 +24,7 @@ type CredentialsFormProps = {
 };
 
 export function CredentialsForm({
+  mode,
   schema,
   submitLabel,
   passwordHint,
@@ -37,7 +40,8 @@ export function CredentialsForm({
   // Validation messages are i18n keys (see schema.ts).
   const fieldError = (name: keyof Credentials) => {
     const key = formState.errors[name]?.message;
-    return key ? t(key as never) : undefined;
+    if (!key) return undefined;
+    return isValidationKey(key) ? t(key) : key;
   };
 
   return (
@@ -71,8 +75,8 @@ export function CredentialsForm({
             error={fieldError('password')}
             hint={passwordHint}
             secureTextEntry
-            autoComplete="current-password"
-            textContentType="password"
+            autoComplete={mode === 'signUp' ? 'new-password' : 'current-password'}
+            textContentType={mode === 'signUp' ? 'newPassword' : 'password'}
             onSubmitEditing={handleSubmit(onSubmit)}
           />
         )}

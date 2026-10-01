@@ -55,7 +55,8 @@
       "weakPassword": "Dit wachtwoord is te zwak",
       "emailNotConfirmed": "Bevestig eerst je e-mailadres",
       "network": "Geen verbinding. Controleer je internet en probeer opnieuw.",
-      "unknown": "Er ging iets mis. Probeer het opnieuw."
+      "unknown": "Er ging iets mis. Probeer het opnieuw.",
+      "rateLimited": "Te veel pogingen. Wacht even en probeer het opnieuw."
     }
   }
 }

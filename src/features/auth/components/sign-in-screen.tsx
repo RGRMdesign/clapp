@@ -16,6 +16,7 @@ export function SignInScreen() {
       <Card className="gap-4">
         <Text variant="title">{t('auth.signIn.title')}</Text>
         <CredentialsForm
+          mode="signIn"
           schema={signInSchema}
           submitLabel={t('auth.signIn.submit')}
           isSubmitting={signIn.isPending}

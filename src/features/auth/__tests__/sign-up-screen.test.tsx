@@ -1,3 +1,4 @@
+import { AuthError } from '@supabase/supabase-js';
 import { render, screen, userEvent } from '@testing-library/react-native';
 import { type ReactNode } from 'react';
 
@@ -47,5 +48,20 @@ describe('SignUpScreen', () => {
 
     expect(await screen.findByRole('heading', { name: 'Check your email' })).toBeOnTheScreen();
     expect(signUp).toHaveBeenCalledWith({ email: 'ada@example.com', password: 'long enough' });
+  });
+
+  it('explains when the email is already registered', async () => {
+    const user = userEvent.setup();
+    signUp.mockResolvedValue({
+      data: { user: null, session: null },
+      error: new AuthError('User already registered', 422, 'user_already_exists'),
+    } as never);
+    await render(<SignUpScreen />, { wrapper: QueryWrapper });
+
+    await user.type(screen.getByLabelText('Email'), 'ada@example.com');
+    await user.type(screen.getByLabelText('Password'), 'long enough');
+    await user.press(screen.getByRole('button', { name: 'Sign up' }));
+
+    expect(await screen.findByText('An account with this email already exists')).toBeOnTheScreen();
   });
 });

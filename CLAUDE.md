@@ -13,7 +13,7 @@ pnpm typecheck               # tsc --noEmit
 pnpm lint                    # eslint, zero warnings allowed
 pnpm format                  # prettier --write (format:check in CI)
 pnpm test                    # jest (unit + component), jest-expo preset
-pnpm build:web               # static web export → dist/
+pnpm build:web               # static web export → dist/ (verification build: local/mocked Supabase)
 pnpm e2e:web                 # playwright against dist/ (run build:web first)
 pnpm screenshot [routes…]    # screenshots of dist/ → screenshots/*.png (mobile+desktop, light+dark)
 pnpm check                   # ALL of the above — the definition of done

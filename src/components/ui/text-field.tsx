@@ -50,6 +50,8 @@ export function TextField({
       {message ? (
         <Text
           role={error ? 'alert' : undefined}
+          // Announce validation errors on native screen readers (Android live region / iOS).
+          aria-live={error ? 'polite' : undefined}
           variant="muted"
           className={error ? 'text-danger' : undefined}
         >

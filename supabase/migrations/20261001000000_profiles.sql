@@ -22,6 +22,11 @@ create policy "Users can update their own profile"
   using ((select auth.uid()) = id)
   with check ((select auth.uid()) = id);
 
+-- Rows are created by the trigger below and deleted with the auth user; clients may only edit
+-- display_name. (No insert/delete policies; column-level grants pin the rest.)
+revoke insert, update, delete, truncate on public.profiles from anon, authenticated;
+grant update (display_name) on public.profiles to authenticated;
+
 -- Keep updated_at current.
 create function public.set_updated_at()
 returns trigger
@@ -47,10 +52,14 @@ set search_path = ''
 as $$
 begin
   insert into public.profiles (id, display_name)
-  values (new.id, new.raw_user_meta_data ->> 'display_name');
+  -- user-controlled metadata: truncate to the column's limit so sign-up can't fail on it
+  values (new.id, left(new.raw_user_meta_data ->> 'display_name', 80));
   return new;
 end;
 $$;
+
+-- Trigger-only function: not callable through the API.
+revoke execute on function public.handle_new_user() from public, anon, authenticated;
 
 create trigger on_auth_user_created
   after insert on auth.users

@@ -23,12 +23,15 @@ docker run -d --name "$NAME" --network none -e POSTGRES_PASSWORD=postgres "$IMAG
 psql_as() { docker exec -i "$NAME" psql -v ON_ERROR_STOP=1 -U "$1" -h localhost -d postgres -q "${@:2}"; }
 
 echo "Waiting for database…"
+ready=false
 for _ in $(seq 1 90); do
   if docker exec "$NAME" psql -U postgres -h localhost -d postgres -tAc "select to_regclass('auth.users')" 2>/dev/null | grep -q users; then
+    ready=true
     break
   fi
   sleep 2
 done
+$ready || { echo "Database did not become ready in time." >&2; docker logs --tail 50 "$NAME" >&2; exit 1; }
 
 # Migrations run as `postgres`, like on Supabase (so default grants for anon/authenticated apply).
 for f in "$ROOT"/supabase/migrations/*.sql; do

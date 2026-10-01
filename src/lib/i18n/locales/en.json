@@ -55,7 +55,8 @@
       "weakPassword": "This password is too weak",
       "emailNotConfirmed": "Confirm your email address first",
       "network": "No connection. Check your internet and try again.",
-      "unknown": "Something went wrong. Please try again."
+      "unknown": "Something went wrong. Please try again.",
+      "rateLimited": "Too many attempts. Wait a moment and try again."
     }
   }
 }

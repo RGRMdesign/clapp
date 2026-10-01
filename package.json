@@ -9,10 +9,10 @@
   },
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
-    "build:web": "EXPO_NO_TELEMETRY=1 expo export --platform web",
+    "build:web": "EXPO_NO_TELEMETRY=1 EXPO_PUBLIC_SUPABASE_URL=${E2E_SUPABASE_URL:-http://127.0.0.1:54321} EXPO_PUBLIC_SUPABASE_KEY=${E2E_SUPABASE_KEY:-local-e2e-key} expo export --platform web",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
@@ -32,7 +32,8 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts && prettier --write src/lib/supabase/database.types.ts",
     "db:push": "supabase db push",
-    "db:test:docker": "bash scripts/db-test.sh"
+    "db:test:docker": "bash scripts/db-test.sh",
+    "build:web:prod": "EXPO_NO_TELEMETRY=1 expo export --platform web"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",

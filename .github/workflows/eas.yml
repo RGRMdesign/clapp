@@ -33,4 +33,7 @@ jobs:
       - if: inputs.action == 'build-production'
         run: eas build --profile production --platform all --non-interactive --no-wait
       - if: inputs.action == 'deploy-web'
-        run: pnpm build:web && eas deploy --prod --non-interactive
+        run: pnpm build:web:prod && eas deploy --prod --non-interactive
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_KEY }}
