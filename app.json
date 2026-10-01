@@ -37,7 +37,8 @@
         }
       ],
       "expo-localization",
-      "expo-secure-store"
+      "expo-secure-store",
+      "./plugins/with-e2e-cleartext.js"
     ],
     "experiments": {
       "typedRoutes": true,

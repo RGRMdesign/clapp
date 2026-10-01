@@ -19,6 +19,15 @@
       "Bash(pnpm build:web:*)",
       "Bash(pnpm screenshot:*)",
       "Bash(pnpm check:*)",
+      "Bash(pnpm exec supabase status:*)",
+      "Bash(pnpm exec supabase migration:*)",
+      "Bash(pnpm db:types:*)",
+      "Bash(pnpm db:reset:*)",
+      "Bash(pnpm db:stop:*)",
+      "Bash(pnpm db:start:*)",
+      "Bash(pnpm db:test:docker:*)",
+      "Bash(pnpm db:test:*)",
+      "Bash(pnpm db:new:*)",
       "Bash(pnpm doctor:*)",
       "Bash(pnpm exec:*)",
       "Bash(pnpm why:*)",
@@ -74,7 +83,10 @@
       "Bash(git reset --hard:*)",
       "Bash(rm -rf /:*)",
       "Bash(eas submit:*)",
-      "Bash(npx eas-cli submit:*)"
+      "Bash(npx eas-cli submit:*)",
+      "Bash(pnpm db:push:*)",
+      "Bash(pnpm exec supabase db push:*)",
+      "Bash(npx supabase db push:*)"
     ]
   },
   "hooks": {

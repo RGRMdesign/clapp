@@ -1,6 +1,6 @@
 # Clapp
 
-Cross-platform app (iOS, Android, web) built with **Expo SDK 57**, React Native 0.86 (New Architecture), React 19, **Expo Router**, TypeScript (strict), **NativeWind v4** (Tailwind 3). Package manager: **pnpm**.
+Cross-platform app (iOS, Android, web) built with **Expo SDK 57**, React Native 0.86 (New Architecture), React 19, **Expo Router**, TypeScript (strict), **NativeWind v4** (Tailwind 3). Backend: **Supabase** (Postgres + Auth). Package manager: **pnpm**.
 
 This repo is set up for autonomous feature work by Claude. Follow the workflow below; the hooks and `pnpm check` enforce most of it.
 
@@ -13,18 +13,21 @@ pnpm typecheck               # tsc --noEmit
 pnpm lint                    # eslint, zero warnings allowed
 pnpm format                  # prettier --write (format:check in CI)
 pnpm test                    # jest (unit + component), jest-expo preset
-pnpm build:web               # static web export → dist/
+pnpm build:web               # static web export → dist/ (verification build: local/mocked Supabase)
 pnpm e2e:web                 # playwright against dist/ (run build:web first)
 pnpm screenshot [routes…]    # screenshots of dist/ → screenshots/*.png (mobile+desktop, light+dark)
 pnpm check                   # ALL of the above — the definition of done
 npx expo install <pkg>       # ALWAYS use this to add runtime deps (SDK-compatible versions)
+pnpm db:new <name>           # new SQL migration in supabase/migrations
+pnpm db:test:docker          # apply migrations + run pgTAP tests in a throwaway Postgres (works in cloud)
+pnpm db:start / db:test / db:types   # full local Supabase stack (Docker), tests, regenerate types
 ```
 
 ## Definition of done
 
 A task is done only when:
 
-1. `pnpm check` passes (typecheck, lint, format, unit tests, web build, web E2E).
+1. `pnpm check` passes (typecheck, lint, format, unit tests, web build, web E2E). Database changes: `pnpm db:test:docker` passes too.
 2. New behavior has tests: unit/component tests next to the code, and a Playwright spec in `e2e/web/` for user-facing flows.
 3. For UI changes: you ran `pnpm screenshot <routes>` and **looked at the images** (light + dark, mobile + desktop) with the Read tool.
 4. All user-facing strings are in `src/lib/i18n/locales/en.json` **and** `nl.json`.
@@ -47,12 +50,16 @@ src/
     index.ts            # PUBLIC API — the only thing routes may import
   components/ui/        # design system primitives (Text, Button, Card, Screen, SegmentedControl…)
   hooks/                # shared hooks (platform-specific via .web.ts)
-  lib/                  # framework-agnostic infra: i18n, storage, query client, cn()
+  lib/                  # framework-agnostic infra: i18n, storage, query client, cn(), env, supabase client
+  test-utils/           # shared test helpers (QueryWrapper)
   theme/                # tokens.js (single source for colors), navigation theme
-e2e/web/                # Playwright specs (run against static web export)
+e2e/web/                # Playwright specs (run against static web export); support/supabase.ts mocks the Auth API
 e2e/native/             # Maestro flows (CI / local simulator only)
 docs/                   # architecture, decisions (ADRs), feature specs
+supabase/               # config.toml, migrations/ (SQL), tests/ (pgTAP)
 ```
+
+Auth: `src/app/_layout.tsx` guards routes with `Stack.Protected` — `(tabs)` requires a session, `(auth)` (sign-in/up) is for signed-out users. Session state lives in `useAuthStore` (`@/features/auth`). Routes compose features (e.g. the settings route renders `<SettingsScreen><AccountSection /></SettingsScreen>`).
 
 Import rules (enforced by ESLint `no-restricted-imports`):
 
@@ -71,6 +78,8 @@ Import rules (enforced by ESLint `no-restricted-imports`):
 
 **Accessibility**: use ARIA props (`role`, `aria-label`, `aria-checked`, `aria-disabled`), not `accessibility*` props. Touch targets ≥ 44px (`min-h-11`). Every interactive element needs an accessible name — tests query by role + name, so this is enforced in practice.
 
+**Backend**: use the `supabase` skill. Every table has RLS + pgTAP tests. Data access lives in the feature's `api.ts` (TanStack Query hooks around the typed `supabase` client from `@/lib/supabase`). Only `EXPO_PUBLIC_*` values go in the app — never service-role keys.
+
 **State**: server data → TanStack Query (`useQuery`/`useMutation`, query keys as const arrays per feature). Client/UI state → `useState`; shared client state → a Zustand store in the feature (`store.ts`); persist with `persist` + `createJSONStorage(() => storage)` from `@/lib/storage`. Forms → react-hook-form + zod (`@hookform/resolvers/zod`). Validate all external data with zod schemas in `schema.ts`; derive types with `z.infer`.
 
 **i18n**: `const { t } = useTranslation()`; keys are type-checked against `en.json`. Add keys to both `en.json` and `nl.json`.
@@ -86,7 +95,8 @@ Import rules (enforced by ESLint `no-restricted-imports`):
 - Use matchers like `toBeOnTheScreen()`, `toBeChecked()`, `toBeDisabled()`.
 - Full guide: `node_modules/@testing-library/react-native/docs/guides/llm-guidelines.md`.
 - Global mocks in `jest.setup.ts` (safe-area, secure-store). Reset Zustand stores in `beforeEach` with `useXStore.setState(...)`.
-- Playwright: `getByRole` locators; links rendered by `<Link asChild>` have role `link`.
+- Components using TanStack Query: `await render(<X />, { wrapper: QueryWrapper })` (`@/test-utils`). Mock `@/lib/supabase` per test file. When mocking `expo-router`, spread `jest.requireActual('expo-router')`.
+- Playwright: `getByRole`/`getByLabel` locators; links rendered by `<Link asChild>` have role `link`. Signed-in flows: `mockSupabaseAuth(page, { accounts: [TEST_ACCOUNT] })` + `signIn(page)` from `e2e/web/support/supabase.ts`.
 
 **Dependencies**: prefer Expo SDK modules. Add runtime deps with `npx expo install` (keeps versions SDK-compatible). Every new runtime dependency needs a short ADR in `docs/decisions/` (use the `add-dependency` skill). Never edit `ios/` or `android/` — they are generated (CNG); configure via `app.json` and config plugins.
 
@@ -105,11 +115,15 @@ Known gotchas in this setup:
 - ESLint is pinned to v9 (eslint-plugin-react breaks on v10).
 - NativeWind is v4 (Tailwind **3**). Don't follow Tailwind v4 / NativeWind v5 docs.
 - Static web hosting must serve `+not-found.html` for unknown paths; `expo serve` returns a plain 404 for direct hits.
+- NativeWind can't style `placeholderTextColor` — use `tokenColor()` from `@/theme/colors` (import that file directly in `components/`, not `@/theme`, to avoid pulling in expo-router).
+- Navigating between sibling auth screens: `<Link replace>` so screens don't stack (on web hidden stacked screens stay in the DOM and duplicate labels).
+- RLS tests: Postgres images differ in how `auth.uid()` reads the JWT; set both `request.jwt.claims` and `request.jwt.claim.sub`. Migrations must run as `postgres` so default grants apply.
 
 ## Claude Code environment notes
 
 - Cloud sessions (`CLAUDE_CODE_REMOTE=true`): no iOS/Android simulators. Verify UI through the web build (`pnpm build:web && pnpm e2e:web && pnpm screenshot`). Native-specific code is verified in CI (EAS build + Maestro).
 - `*.expo.dev` may be blocked; the SessionStart hook sets `EXPO_OFFLINE=1` so `npx expo install` resolves versions locally.
+- Docker is installed but the daemon may not be running; `pnpm db:test:docker` starts it. The full `supabase start` stack can't pull all images in the sandbox — use `db:test:docker` and hand-edit types in the generated format.
 - Hooks (`.claude/hooks/`): Prettier + ESLint run after every edit (lint errors are reported back to you); a Stop hook runs typecheck + related tests and blocks finishing while they fail.
 - Skills in `.claude/skills/`, subagents in `.claude/agents/`.
 

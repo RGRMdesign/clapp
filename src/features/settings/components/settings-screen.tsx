@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Card, Screen, SegmentedControl, Text } from '@/components/ui';
@@ -7,7 +8,12 @@ import { type ThemePreference, useSettingsStore } from '../store';
 
 const languageLabels: Record<Language, string> = { en: 'English', nl: 'Nederlands' };
 
-export function SettingsScreen() {
+type SettingsScreenProps = {
+  /** Extra sections from other features (composed by the route), e.g. the account section. */
+  children?: ReactNode;
+};
+
+export function SettingsScreen({ children }: SettingsScreenProps) {
   const { t, i18n } = useTranslation();
   const theme = useSettingsStore((s) => s.theme);
   const setTheme = useSettingsStore((s) => s.setTheme);
@@ -47,6 +53,8 @@ export function SettingsScreen() {
           onChange={setLanguage}
         />
       </Card>
+
+      {children}
     </Screen>
   );
 }

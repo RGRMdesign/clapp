@@ -1,11 +1,21 @@
-# Maestro flow — runs against a native build (CI: Android emulator; locally: `pnpm e2e:native`).
+# Maestro flow — runs against a native build connected to a local Supabase
+# (CI: Android emulator, see .github/workflows/native.yml; locally: `pnpm db:start` + `pnpm e2e:native`).
 appId: nl.rgrmdesign.clapp
 ---
 - launchApp:
     clearState: true
+- assertVisible: 'Sign in'
+- tapOn: 'No account yet? Sign up'
+- tapOn: 'Email'
+- inputRandomEmail
+- tapOn: 'Password'
+- inputText: 'correct horse battery'
+- tapOn: 'Sign up'
 - assertVisible: 'Welcome to Clapp'
 - tapOn: 'Open settings'
 - assertVisible: 'Settings'
 - tapOn: 'Dark'
 - tapOn: 'Nederlands'
 - assertVisible: 'Instellingen'
+- tapOn: 'Uitloggen'
+- assertVisible: 'Inloggen'
