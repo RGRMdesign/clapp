@@ -1,0 +1,25 @@
+{
+  "tabs": {
+    "home": "Home",
+    "settings": "Instellingen"
+  },
+  "home": {
+    "title": "Welkom bij Clapp",
+    "subtitle": "Eén codebase voor iOS, Android en het web.",
+    "cta": "Open instellingen"
+  },
+  "settings": {
+    "title": "Instellingen",
+    "appearance": "Weergave",
+    "language": "Taal",
+    "theme": {
+      "system": "Systeem",
+      "light": "Licht",
+      "dark": "Donker"
+    }
+  },
+  "notFound": {
+    "title": "Pagina niet gevonden",
+    "back": "Naar home"
+  }
+}

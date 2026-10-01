@@ -1,0 +1,36 @@
+name: EAS
+
+# Cloud builds / OTA updates via Expo Application Services. Requires the EXPO_TOKEN secret.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to run
+        type: choice
+        options: [update-preview, build-preview, build-production, deploy-web]
+        default: update-preview
+
+jobs:
+  eas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+      - if: inputs.action == 'update-preview'
+        run: eas update --channel preview --message "${{ github.sha }}" --non-interactive
+      - if: inputs.action == 'build-preview'
+        run: eas build --profile preview --platform all --non-interactive --no-wait
+      - if: inputs.action == 'build-production'
+        run: eas build --profile production --platform all --non-interactive --no-wait
+      - if: inputs.action == 'deploy-web'
+        run: pnpm build:web && eas deploy --prod --non-interactive

@@ -1,0 +1,11 @@
+# Maestro flow — runs against a native build (CI: Android emulator; locally: `pnpm e2e:native`).
+appId: nl.rgrmdesign.clapp
+---
+- launchApp:
+    clearState: true
+- assertVisible: 'Welcome to Clapp'
+- tapOn: 'Open settings'
+- assertVisible: 'Settings'
+- tapOn: 'Dark'
+- tapOn: 'Nederlands'
+- assertVisible: 'Instellingen'

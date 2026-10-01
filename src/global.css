@@ -1,0 +1,4 @@
+/* Color tokens are injected by tailwind.config.js from src/theme/tokens.js. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

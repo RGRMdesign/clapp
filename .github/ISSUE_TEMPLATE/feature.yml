@@ -1,0 +1,42 @@
+name: Feature
+description: A feature for Claude (or a human) to implement
+labels: [feature]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What problem does this solve, for whom?
+    validations:
+      required: true
+  - type: textarea
+    id: stories
+    attributes:
+      label: User stories
+      placeholder: As a <user>, I want <action> so that <outcome>.
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      description: Testable statements. Claude turns each into tests.
+      placeholder: |
+        - [ ] Given …, when …, then …
+    validations:
+      required: true
+  - type: textarea
+    id: screens
+    attributes:
+      label: Screens / flow
+      description: Routes, navigation, sketches or design links.
+  - type: textarea
+    id: data
+    attributes:
+      label: Data
+      description: APIs, fields, validation, persistence.
+  - type: textarea
+    id: edge
+    attributes:
+      label: Edge cases & out of scope
+  - type: markdown
+    attributes:
+      value: Add the `claude` label (or comment `@claude implement this`) to let Claude pick it up.
