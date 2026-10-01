@@ -75,7 +75,7 @@ jobs:
   ios-build:
     name: iOS build (compile check)
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'native')
-    runs-on: macos-15
+    runs-on: macos-26 # Xcode 26 SDK → Liquid Glass
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5

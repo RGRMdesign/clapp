@@ -23,7 +23,13 @@ export function Screen({ scroll = true, className, children, ...props }: ScreenP
   return (
     <SafeAreaView edges={['top', 'left', 'right']} className="flex-1 bg-background">
       {scroll ? (
-        <ScrollView contentContainerClassName="grow" keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerClassName="grow"
+          keyboardShouldPersistTaps="handled"
+          // iOS: let content scroll underneath the translucent (Liquid Glass) tab bar while
+          // insetting it so the last item stays reachable.
+          contentInsetAdjustmentBehavior="automatic"
+        >
           {content}
         </ScrollView>
       ) : (
