@@ -7,10 +7,13 @@ See [CLAUDE.md](../CLAUDE.md) for the folder structure, import rules and convent
 ```
 src/app/_layout.tsx
   GestureHandlerRootView → SafeAreaProvider → QueryClientProvider → ThemeProvider (navigation)
-    └─ Stack
-        ├─ (tabs)/_layout.tsx → Tabs: index (home), settings
+    └─ Stack  (rendered once the stored session is restored)
+        ├─ Stack.Protected guard=signedIn  → (tabs)/_layout.tsx → Tabs: index (home), settings
+        ├─ Stack.Protected guard=!signedIn → (auth)/ sign-in, sign-up
         └─ +not-found
 ```
+
+- `useAuthListener()` (auth feature) subscribes to `supabase.auth.onAuthStateChange` and mirrors the session into `useAuthStore`.
 
 - `useApplySettings()` (settings feature) applies the persisted theme (NativeWind `colorScheme` → `.dark` class / native appearance) and language (i18next).
 - Persistence: `@/lib/storage` — SecureStore on native, localStorage on web.

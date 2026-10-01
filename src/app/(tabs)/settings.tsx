@@ -1,3 +1,10 @@
+import { AccountSection } from '@/features/auth';
 import { SettingsScreen } from '@/features/settings';
 
-export default SettingsScreen;
+export default function SettingsRoute() {
+  return (
+    <SettingsScreen>
+      <AccountSection />
+    </SettingsScreen>
+  );
+}

@@ -21,5 +21,41 @@
   "notFound": {
     "title": "Pagina niet gevonden",
     "back": "Naar home"
+  },
+  "auth": {
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "submitting": "Even geduld…",
+    "signIn": {
+      "title": "Inloggen",
+      "submit": "Inloggen",
+      "toSignUp": "Nog geen account? Registreer"
+    },
+    "signUp": {
+      "title": "Account aanmaken",
+      "submit": "Registreren",
+      "passwordHint": "Minimaal 8 tekens",
+      "toSignIn": "Al een account? Log in",
+      "checkEmailTitle": "Controleer je e-mail",
+      "checkEmailBody": "We hebben je een link gestuurd om je account te bevestigen. Open die en log daarna in."
+    },
+    "account": {
+      "title": "Account",
+      "signedInAs": "Ingelogd als {{email}}",
+      "signOut": "Uitloggen"
+    },
+    "validation": {
+      "email": "Vul een geldig e-mailadres in",
+      "passwordRequired": "Vul je wachtwoord in",
+      "passwordTooShort": "Gebruik minimaal 8 tekens"
+    },
+    "errors": {
+      "invalidCredentials": "Onjuist e-mailadres of wachtwoord",
+      "emailTaken": "Er bestaat al een account met dit e-mailadres",
+      "weakPassword": "Dit wachtwoord is te zwak",
+      "emailNotConfirmed": "Bevestig eerst je e-mailadres",
+      "network": "Geen verbinding. Controleer je internet en probeer opnieuw.",
+      "unknown": "Er ging iets mis. Probeer het opnieuw."
+    }
   }
 }

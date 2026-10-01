@@ -1,0 +1,17 @@
+import { type Session } from '@supabase/supabase-js';
+import { create } from 'zustand';
+
+export type AuthStatus = 'loading' | 'signedIn' | 'signedOut';
+
+type AuthState = {
+  status: AuthStatus;
+  session: Session | null;
+  setSession: (session: Session | null) => void;
+};
+
+/** Mirror of the Supabase session. Written only by `useAuthListener`; read everywhere else. */
+export const useAuthStore = create<AuthState>()((set) => ({
+  status: 'loading',
+  session: null,
+  setSession: (session) => set({ session, status: session ? 'signedIn' : 'signedOut' }),
+}));

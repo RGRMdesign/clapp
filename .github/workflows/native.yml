@@ -33,7 +33,14 @@ jobs:
           distribution: zulu
           java-version: 17
       - run: pnpm install --frozen-lockfile
+      # Local Supabase for the E2E flow (sign-up works without email confirmation locally).
+      - run: pnpm exec supabase start -x studio,imgproxy,mailpit,edge-runtime,logflare,vector,supavisor,realtime,storage-api
+      - name: Read local Supabase key
+        run: echo "EXPO_PUBLIC_SUPABASE_KEY=$(pnpm exec supabase status -o env | grep '^ANON_KEY=' | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
       - name: Prebuild + assemble release APK
+        env:
+          # 10.0.2.2 is the host machine as seen from the Android emulator.
+          EXPO_PUBLIC_SUPABASE_URL: http://10.0.2.2:54321
         run: |
           npx expo prebuild --platform android --no-install
           cd android && ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=x86_64
