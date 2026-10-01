@@ -1,16 +1,8 @@
 import { DarkTheme, DefaultTheme, type Theme } from 'expo-router';
 
-import { colors, type ColorToken } from './tokens';
+import { type ColorScheme, tokenColor } from './colors';
 
-type Scheme = keyof typeof colors;
-
-/** Token as an `rgb()` string, for APIs that do not accept className (navigation, icons). */
-export function tokenColor(scheme: Scheme, token: ColorToken) {
-  const [r, g, b] = colors[scheme][token];
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-function navigationTheme(scheme: Scheme): Theme {
+function navigationTheme(scheme: ColorScheme): Theme {
   const base = scheme === 'dark' ? DarkTheme : DefaultTheme;
   return {
     ...base,

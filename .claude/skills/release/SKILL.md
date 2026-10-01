@@ -7,13 +7,13 @@ description: Build and ship the app with EAS (development/preview/production bui
 
 Requires an Expo account (`EXPO_TOKEN`) — this works in GitHub Actions; in the cloud sandbox `*.expo.dev` may be blocked, so prefer triggering the workflows in `.github/workflows/`.
 
-| Goal                             | Command (CI or local)                                                   |
-| -------------------------------- | ----------------------------------------------------------------------- |
-| Dev build for a device/simulator | `npx eas-cli@latest build --profile development --platform ios          | android`                       |
-| Internal test build              | `npx eas-cli@latest build --profile preview --platform all`             |
-| Store build                      | `npx eas-cli@latest build --profile production --platform all`          |
-| OTA update (JS-only change)      | `npx eas-cli@latest update --channel <preview                           | production> --message "<msg>"` |
-| Web deploy (EAS Hosting)         | `pnpm build:web && npx eas-cli@latest deploy` (`--prod` for production) |
+| Goal                             | Command (CI or local)                                                                                         |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Dev build for a device/simulator | `npx eas-cli@latest build --profile development --platform ios                                                | android`                       |
+| Internal test build              | `npx eas-cli@latest build --profile preview --platform all`                                                   |
+| Store build                      | `npx eas-cli@latest build --profile production --platform all`                                                |
+| OTA update (JS-only change)      | `npx eas-cli@latest update --channel <preview                                                                 | production> --message "<msg>"` |
+| Web deploy (EAS Hosting)         | `pnpm build:web:prod && npx eas-cli@latest deploy` (needs `EXPO_PUBLIC_SUPABASE_*`) (`--prod` for production) |
 
 Rules:
 

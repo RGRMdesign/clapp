@@ -21,5 +21,42 @@
   "notFound": {
     "title": "Page not found",
     "back": "Go to home"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "submitting": "Please wait…",
+    "signIn": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "toSignUp": "No account yet? Sign up"
+    },
+    "signUp": {
+      "title": "Create account",
+      "submit": "Sign up",
+      "passwordHint": "At least 8 characters",
+      "toSignIn": "Already have an account? Sign in",
+      "checkEmailTitle": "Check your email",
+      "checkEmailBody": "We sent you a link to confirm your account. Open it, then sign in."
+    },
+    "account": {
+      "title": "Account",
+      "signedInAs": "Signed in as {{email}}",
+      "signOut": "Sign out"
+    },
+    "validation": {
+      "email": "Enter a valid email address",
+      "passwordRequired": "Enter your password",
+      "passwordTooShort": "Use at least 8 characters"
+    },
+    "errors": {
+      "invalidCredentials": "Incorrect email or password",
+      "emailTaken": "An account with this email already exists",
+      "weakPassword": "This password is too weak",
+      "emailNotConfirmed": "Confirm your email address first",
+      "network": "No connection. Check your internet and try again.",
+      "unknown": "Something went wrong. Please try again.",
+      "rateLimited": "Too many attempts. Wait a moment and try again."
+    }
   }
 }
