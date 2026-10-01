@@ -49,6 +49,7 @@ src/
   features/<name>/      # vertical slice: components/, hooks, store.ts, api.ts, schema.ts, __tests__/
     index.ts            # PUBLIC API — the only thing routes may import
   components/ui/        # design system primitives (Text, Button, Card, Screen, SegmentedControl…)
+  components/navigation/ # AppTabs (native tab bar on iOS/Android, JS tabs on web) + tabs-config.ts
   hooks/                # shared hooks (platform-specific via .web.ts)
   lib/                  # framework-agnostic infra: i18n, storage, query client, cn(), env, supabase client
   test-utils/           # shared test helpers (QueryWrapper)
@@ -86,7 +87,7 @@ Import rules (enforced by ESLint `no-restricted-imports`):
 
 **Platform differences**: prefer one implementation. When needed, use `file.web.ts(x)` / `file.native.ts(x)` (or `.ios`/`.android`) with the same exports — not `Platform.OS` branches spread through components. Web is statically rendered: never read `window`/`localStorage`/`matchMedia` during render; do it in effects or behind `useSyncExternalStore` (see `src/hooks/use-color-scheme.web.ts`).
 
-**Navigation**: `Link`, `router`, `useLocalSearchParams` from `expo-router`. Tabs: `import { Tabs } from 'expo-router/js-tabs'` (the `expo-router` export is deprecated). Use `<Link asChild>` around buttons for navigation so web gets real `<a>` links.
+**Navigation**: `Link`, `router`, `useLocalSearchParams` from `expo-router`. Tabs: the tab bar is `AppTabs` (`src/components/navigation`): native `NativeTabs` on iOS/Android (Liquid Glass on iOS 26; never give it a background color or blur effect), JS `Tabs` from `expo-router/js-tabs` on web. Add or change tabs only in `tabs-config.ts` (route, label key, SF Symbol, Material Symbol, Ionicon). Use `<Link asChild>` around buttons for navigation so web gets real `<a>` links.
 
 **Testing** (React Native Testing Library v14 — the API is async):
 
@@ -110,7 +111,7 @@ Expo ships breaking changes every SDK. Before using an Expo/RN/library API you'r
 
 Known gotchas in this setup:
 
-- `expo-router` `Tabs` export is deprecated → `expo-router/js-tabs`.
+- `expo-router` `Tabs` export is deprecated → `expo-router/js-tabs` (web); native uses `expo-router/unstable-native-tabs`.
 - RNTL v14: `render`, `fireEvent`, `userEvent` are async.
 - ESLint is pinned to v9 (eslint-plugin-react breaks on v10).
 - NativeWind is v4 (Tailwind **3**). Don't follow Tailwind v4 / NativeWind v5 docs.
